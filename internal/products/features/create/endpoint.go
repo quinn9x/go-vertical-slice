@@ -23,13 +23,10 @@ func (e *Endpoint) Handle(c *echo.Context) error {
 	var command CreatorProductCommand
 
 	if err := c.Bind(&command); err != nil {
-		return echo.NewHTTPError(
-			http.StatusBadRequest,
-			"invalid request body",
-		)
+		return err
 	}
 
-	result, err := e.handler.Handle(command)
+	result, err := e.handler.Handle(c.Request().Context(), command)
 	if err != nil {
 		return err
 	}

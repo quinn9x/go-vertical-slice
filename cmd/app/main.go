@@ -7,7 +7,10 @@ import (
 
 	"github.com/labstack/echo/v5"
 
+	"github.com/quinn9x/go-vertical-slice/internal/products/domain"
 	prodCreate "github.com/quinn9x/go-vertical-slice/internal/products/features/create"
+	"github.com/quinn9x/go-vertical-slice/internal/products/infra"
+	"github.com/quinn9x/go-vertical-slice/internal/shared/database"
 	apperrors "github.com/quinn9x/go-vertical-slice/internal/shared/errors"
 	"github.com/quinn9x/go-vertical-slice/internal/shared/validation"
 )
@@ -17,9 +20,21 @@ func main() {
 
 	e.HTTPErrorHandler = apperrors.HTTPErrorHandler
 
+	db, err := database.New("data/app.db")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// Migrate the schema
+	if err := db.AutoMigrate(&domain.Product{}); err != nil {
+		log.Fatal(err)
+	}
+
+	prodRepo := infra.NewProductRepository(db.DB)
+
 	validator := validation.New()
 
-	prodCreateHandler := prodCreate.NewHandler(validator)
+	prodCreateHandler := prodCreate.NewHandler(validator, prodRepo)
 	prodCreateEndpoint := prodCreate.NewEndpoint(prodCreateHandler)
 
 	e.POST("/api/products", prodCreateEndpoint.Handle)

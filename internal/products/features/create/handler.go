@@ -1,8 +1,12 @@
 package create
 
 import (
+	"context"
+
 	"github.com/google/uuid"
 
+	"github.com/quinn9x/go-vertical-slice/internal/products/domain"
+	"github.com/quinn9x/go-vertical-slice/internal/products/infra"
 	"github.com/quinn9x/go-vertical-slice/internal/shared/validation"
 )
 
@@ -15,25 +19,37 @@ type ProductResponse struct {
 
 // Handler handles creator product requests.
 type Handler struct {
-	validator *validation.Validator
+	validator  *validation.Validator
+	repository *infra.ProductRepository
 }
 
 // NewHandler creates a new product creator handler.
-func NewHandler(validator *validation.Validator) *Handler {
+func NewHandler(validator *validation.Validator, repository *infra.ProductRepository) *Handler {
 	return &Handler{
-		validator: validator,
+		validator:  validator,
+		repository: repository,
 	}
 }
 
 // Handle creates a product response from the given command.
-func (h *Handler) Handle(command CreatorProductCommand) (ProductResponse, error) {
+func (h *Handler) Handle(ctx context.Context, command CreatorProductCommand) (ProductResponse, error) {
 	if err := h.validator.Struct(command); err != nil {
 		return ProductResponse{}, err
 	}
 
-	return ProductResponse{
+	product := &domain.Product{
 		ID:    uuid.NewString(),
 		Name:  command.Name,
 		Price: command.Price,
+	}
+
+	if err := h.repository.Create(ctx, product); err != nil {
+		return ProductResponse{}, err
+	}
+
+	return ProductResponse{
+		ID:    product.ID,
+		Name:  product.Name,
+		Price: product.Price,
 	}, nil
 }

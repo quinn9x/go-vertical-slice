@@ -58,3 +58,7 @@ go.work.sum
 *.swp
 .DS_Store
 Thumbs.db
+
+# 7. Local application data
+data/*
+!data/.gitkeep
