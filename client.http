@@ -1,0 +1,103 @@
+@apiURL = http://localhost:9080
+
+### ============================================================
+### CREATE PRODUCT
+### ============================================================
+
+### Create Product - Success
+# @name createProduct
+POST {{apiURL}}/api/products HTTP/1.1
+content-type: application/json
+
+{
+  "name": "iPhone 17",
+  "price": 999
+}
+
+
+### Create Product - Error: Empty Name
+POST {{apiURL}}/api/products HTTP/1.1
+content-type: application/json
+
+{
+  "name": "",
+  "price": 999
+}
+
+
+### Create Product - Error: Negative Price
+POST {{apiURL}}/api/products HTTP/1.1
+content-type: application/json
+
+{
+  "name": "iPhone 17",
+  "price": -1
+}
+
+
+### Create Product - Error: Missing Name
+POST {{apiURL}}/api/products HTTP/1.1
+content-type: application/json
+
+{
+  "price": 999
+}
+
+
+### Create Product - Error: Missing Price
+POST {{apiURL}}/api/products HTTP/1.1
+content-type: application/json
+
+{
+  "name": "iPhone 17"
+}
+
+
+### Create Product - Error: Zero Price
+POST {{apiURL}}/api/products HTTP/1.1
+content-type: application/json
+
+{
+  "name": "iPhone 17",
+  "price": 0
+}
+
+
+### Create Product - Error: Name Only Whitespace
+POST {{apiURL}}/api/products HTTP/1.1
+content-type: application/json
+
+{
+  "name": "   ",
+  "price": 999
+}
+
+
+### Create Product - Error: Invalid Name Type
+POST {{apiURL}}/api/products HTTP/1.1
+content-type: application/json
+
+{
+  "name": 123,
+  "price": 999
+}
+
+
+### Create Product - Error: Invalid Price Type
+POST {{apiURL}}/api/products HTTP/1.1
+content-type: application/json
+
+{
+  "name": "iPhone 17",
+  "price": "999"
+}
+
+
+### Create Product - Error: Null Price
+POST {{apiURL}}/api/products HTTP/1.1
+content-type: application/json
+
+{
+  "name": "iPhone 17",
+  "price": null
+}
