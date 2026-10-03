@@ -1,0 +1,27 @@
+{
+	"name": "Go Vertical Slice",
+	"build": {
+		"dockerfile": "Dockerfile"
+	},
+	"features": {
+		"ghcr.io/devcontainers/features/node:2": {
+			"version": "24.21.0",
+			"pnpmVersion": "12.8.1"
+		}
+	},
+	"postCreateCommand": "go mod tidy && pnpm install",
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"golang.go",
+				"ms-azuretools.vscode-docker",
+				"tamasfe.even-better-toml",
+				"eamodio.gitlens",
+				"streetsidesoftware.code-spell-checker",
+				"redhat.vscode-yaml",
+				"humao.rest-client"
+			]
+		}
+	},
+	"remoteUser": "vscode"
+}

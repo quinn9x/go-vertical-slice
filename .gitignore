@@ -1,0 +1,60 @@
+# ============================================================================
+# Go & Node.js Production .gitignore
+# ============================================================================
+
+# 1. Executables and Build Artifacts
+# ----------------------------------------------------------------------------
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+bin/
+dist/
+build/
+out/
+
+# Air live-reload temporary files
+tmp/
+
+# 2. Testing, Coverage & Caches
+# ----------------------------------------------------------------------------
+*.test
+*.out
+*.coverprofile
+coverage.txt
+.eslintcache
+.stylelintcache
+.next/
+.nuxt/
+.svelte-kit/
+
+# 3. Dependencies
+# ----------------------------------------------------------------------------
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+# vendor/ # Uncomment ONLY if you do not want to commit Go vendored code
+
+# 4. Multi-Module Workspaces (Go 1.18+)
+# ----------------------------------------------------------------------------
+go.work
+go.work.sum
+
+# 5. Environment Secrets & Local Configurations
+# ----------------------------------------------------------------------------
+.env
+.env.*
+!.env.example
+!.env.*.example
+
+# 6. IDE / System Noise
+# ----------------------------------------------------------------------------
+.idea/
+.vscode/*
+!.vscode/settings.json
+*.swp
+.DS_Store
+Thumbs.db

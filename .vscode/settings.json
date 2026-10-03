@@ -1,0 +1,25 @@
+{
+    "go.toolsManagement.autoUpdate": false,
+    "go.formatTool": "goimports",
+    "go.lintTool": "golangci-lint",
+    "go.lintOnSave": "package",
+    "go.testFlags": [
+        "-v"
+    ],
+    "go.testTimeout": "30s",
+    "editor.formatOnSave": true,
+    "[go]": {
+        "editor.defaultFormatter": "golang.go",
+        "editor.codeActionsOnSave": {
+            "source.organizeImports": "explicit"
+        }
+    },
+    "[go.mod]": {
+        "editor.formatOnSave": true
+    },
+    "gopls": {
+        "buildFlags": [
+            "-tags=wireinject"
+        ]
+    },
+}
