@@ -86,6 +86,35 @@ func (r *ProductRepository) List(ctx context.Context, options products.ListOptio
 	return items, total, nil
 }
 
+// Update modifies an existing product in the database based on its ID.
+func (r *ProductRepository) Update(ctx context.Context, product *domain.Product, expectedVersion int64) error {
+	result := r.db.
+		WithContext(ctx).
+		Model(&domain.Product{}).
+		Where(
+			"id = ? AND version = ?",
+			product.ID,
+			expectedVersion,
+		).
+		Updates(map[string]any{
+			"name":    product.Name,
+			"price":   product.Price,
+			"version": gorm.Expr("version + 1"),
+		})
+
+	if result.Error != nil {
+		return result.Error
+	}
+
+	if result.RowsAffected == 0 {
+		return apperrors.NewConflict(
+			"Product was modified by another request",
+		)
+	}
+
+	return nil
+}
+
 func sortColumn(sortBy string) string {
 	switch sortBy {
 	case sortByName:

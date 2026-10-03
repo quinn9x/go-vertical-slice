@@ -27,3 +27,11 @@ func NewBadRequest(message string) *Error {
 		Message: message,
 	}
 }
+
+// NewConflict creates a new Error instance representing a "conflict" error with the provided message.
+func NewConflict(message string) error {
+	return &Error{
+		Code:    CodeConflict,
+		Message: message,
+	}
+}

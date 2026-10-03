@@ -128,3 +128,53 @@ GET {{apiURL}}/api/products HTTP/1.1
 
 ### Get List Products by search - Success
 GET {{apiURL}}/api/products?search=iphone HTTP/1.1
+
+
+### ============================================================
+### UPDATE PRODUCT
+### ============================================================
+
+### Update Product - Success
+PUT {{apiURL}}/api/products/{{createProduct.response.body.id}} HTTP/1.1
+content-type: application/json
+
+{
+  "name": "iPhone 17 Pro",
+  "price": 1299,
+  "version": 1
+}
+
+
+### Verify Updated Product
+GET {{apiURL}}/api/products/{{createProduct.response.body.id}} HTTP/1.1
+
+
+### Update Product - Error: Empty Name
+PUT {{apiURL}}/api/products/{{createProduct.response.body.id}} HTTP/1.1
+content-type: application/json
+
+{
+  "name": "",
+  "price": 1299,
+  "version": 1
+}
+
+
+### Update Product - Error: Negative Price
+PUT {{apiURL}}/api/products/{{createProduct.response.body.id}} HTTP/1.1
+content-type: application/json
+
+{
+  "name": "iPhone 17 Pro",
+  "price": -1
+}
+
+
+### Update Product - Not Found
+PUT {{apiURL}}/api/products/no-exists HTTP/1.1
+content-type: application/json
+
+{
+  "name": "iPhone 17 Pro",
+  "price": 1299
+}
