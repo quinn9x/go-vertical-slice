@@ -19,3 +19,11 @@ func NewNotFound(message string) *Error {
 		Message: message,
 	}
 }
+
+// NewBadRequest creates a new Error instance representing a "bad request" error with the provided message.
+func NewBadRequest(message string) *Error {
+	return &Error{
+		Code:    CodeBadRequest,
+		Message: message,
+	}
+}

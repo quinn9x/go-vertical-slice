@@ -11,4 +11,5 @@ import (
 type Repository interface {
 	Create(ctx context.Context, product *domain.Product) error
 	GetByID(ctx context.Context, id string) (*domain.Product, error)
+	List(ctx context.Context, options ListOptions) ([]domain.Product, int64, error)
 }

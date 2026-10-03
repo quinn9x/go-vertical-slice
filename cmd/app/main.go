@@ -10,6 +10,7 @@ import (
 	"github.com/quinn9x/go-vertical-slice/internal/products/domain"
 	prodCreate "github.com/quinn9x/go-vertical-slice/internal/products/features/create"
 	prodGet "github.com/quinn9x/go-vertical-slice/internal/products/features/get"
+	prodList "github.com/quinn9x/go-vertical-slice/internal/products/features/list"
 	"github.com/quinn9x/go-vertical-slice/internal/products/infra"
 	"github.com/quinn9x/go-vertical-slice/internal/shared/database"
 	apperrors "github.com/quinn9x/go-vertical-slice/internal/shared/errors"
@@ -41,8 +42,12 @@ func main() {
 	prodGetHandler := prodGet.NewHandler(prodRepo)
 	prodGetEndpoint := prodGet.NewEndpoint(prodGetHandler)
 
+	prodListHandler := prodList.NewHandler(prodRepo)
+	prodListEndpoint := prodList.NewEndpoint(prodListHandler)
+
 	e.POST("/api/products", prodCreateEndpoint.Handle)
 	e.GET("/api/products/:id", prodGetEndpoint.Handle)
+	e.GET("/api/products", prodListEndpoint.Handle)
 
 	e.GET("/health", func(c *echo.Context) error {
 		return c.JSON(http.StatusOK, map[string]string{

@@ -117,3 +117,14 @@ GET {{apiURL}}/api/products/no-exists HTTP/1.1
 
 ### Get Product - Invalid ID
 GET {{apiURL}}/api/products/invalid-id HTTP/1.1
+
+
+### ============================================================
+### GET PRODUCTS
+### ============================================================
+
+### Get List Products - Success
+GET {{apiURL}}/api/products HTTP/1.1
+
+### Get List Products by search - Success
+GET {{apiURL}}/api/products?search=iphone HTTP/1.1

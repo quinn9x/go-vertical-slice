@@ -7,9 +7,14 @@ import (
 
 	"gorm.io/gorm"
 
+	"github.com/quinn9x/go-vertical-slice/internal/products"
 	"github.com/quinn9x/go-vertical-slice/internal/products/domain"
 	apperrors "github.com/quinn9x/go-vertical-slice/internal/shared/errors"
 )
+
+const sortByName = "name"
+
+const sortByPrice = "price"
 
 // ProductRepository implements the Repository interface for managing products in the database.
 type ProductRepository struct {
@@ -41,4 +46,65 @@ func (r *ProductRepository) GetByID(ctx context.Context, id string) (*domain.Pro
 	}
 
 	return &product, nil
+}
+
+// List retrieves a paginated list of products from the database based on the provided pagination parameters.
+func (r *ProductRepository) List(ctx context.Context, options products.ListOptions) ([]domain.Product, int64, error) {
+	var items []domain.Product
+
+	var total int64
+
+	query := r.db.
+		WithContext(ctx).
+		Model(&domain.Product{})
+
+	if options.Search != "" {
+		search := "%" + options.Search + "%"
+
+		query = query.Where(
+			"name LIKE ?",
+			search,
+		)
+	}
+
+	if err := query.Count(&total).Error; err != nil {
+		return nil, 0, err
+	}
+
+	if err := query.
+		Order(
+			sortColumn(options.SortBy) +
+				" " +
+				sortDirection(options.SortOrder),
+		).
+		Offset(options.Pagination.Offset()).
+		Limit(options.Pagination.PageSize).
+		Find(&items).Error; err != nil {
+		return nil, 0, err
+	}
+
+	return items, total, nil
+}
+
+func sortColumn(sortBy string) string {
+	switch sortBy {
+	case sortByName:
+		return sortByName
+
+	case sortByPrice:
+		return sortByPrice
+
+	default:
+		return "created_at"
+	}
+}
+
+func sortDirection(sortOrder string) string {
+	switch sortOrder {
+	case "asc":
+		return "ASC"
+
+	default:
+		return "DESC"
+	}
 }
