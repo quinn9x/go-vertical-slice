@@ -13,4 +13,5 @@ type Repository interface {
 	GetByID(ctx context.Context, id string) (*domain.Product, error)
 	List(ctx context.Context, options ListOptions) ([]domain.Product, int64, error)
 	Update(ctx context.Context, product *domain.Product, expectedVersion int64) error
+	Delete(ctx context.Context, id string) error
 }

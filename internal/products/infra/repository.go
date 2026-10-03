@@ -115,6 +115,21 @@ func (r *ProductRepository) Update(ctx context.Context, product *domain.Product,
 	return nil
 }
 
+// Delete removes a product from the database based on its ID.
+func (r *ProductRepository) Delete(ctx context.Context, id string) error {
+	result := r.db.WithContext(ctx).Delete(&domain.Product{}, "id = ?", id)
+
+	if result.Error != nil {
+		return result.Error
+	}
+
+	if result.RowsAffected == 0 {
+		return apperrors.NewNotFound("product not found")
+	}
+
+	return nil
+}
+
 func sortColumn(sortBy string) string {
 	switch sortBy {
 	case sortByName:

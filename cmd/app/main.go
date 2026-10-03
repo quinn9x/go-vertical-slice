@@ -9,6 +9,7 @@ import (
 
 	"github.com/quinn9x/go-vertical-slice/internal/products/domain"
 	prodCreate "github.com/quinn9x/go-vertical-slice/internal/products/features/create"
+	prodDelete "github.com/quinn9x/go-vertical-slice/internal/products/features/delete"
 	prodGet "github.com/quinn9x/go-vertical-slice/internal/products/features/get"
 	prodList "github.com/quinn9x/go-vertical-slice/internal/products/features/list"
 	prodUpdate "github.com/quinn9x/go-vertical-slice/internal/products/features/update"
@@ -49,10 +50,14 @@ func main() {
 	prodUpdateHandler := prodUpdate.NewHandler(validator, prodRepo)
 	prodUpdateEndpoint := prodUpdate.NewEndpoint(prodUpdateHandler)
 
+	prodDeleteHandler := prodDelete.NewHandler(prodRepo)
+	prodDeleteEndpoint := prodDelete.NewEndpoint(prodDeleteHandler)
+
 	e.POST("/api/products", prodCreateEndpoint.Handle)
 	e.GET("/api/products/:id", prodGetEndpoint.Handle)
 	e.GET("/api/products", prodListEndpoint.Handle)
 	e.PUT("/api/products/:id", prodUpdateEndpoint.Handle)
+	e.DELETE("/api/products/:id", prodDeleteEndpoint.Handle)
 
 	e.GET("/health", func(c *echo.Context) error {
 		return c.JSON(http.StatusOK, map[string]string{

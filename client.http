@@ -178,3 +178,19 @@ content-type: application/json
   "name": "iPhone 17 Pro",
   "price": 1299
 }
+
+
+### ============================================================
+### DELETE PRODUCT
+### ============================================================
+
+### Delete Product - Success
+DELETE {{apiURL}}/api/products/{{createProduct.response.body.id}} HTTP/1.1
+
+
+### Verify Deleted Product
+GET {{apiURL}}/api/products/{{createProduct.response.body.id}} HTTP/1.1
+
+
+### Delete Product - Not Found
+DELETE {{apiURL}}/api/products/no-exists HTTP/1.1
