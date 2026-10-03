@@ -5,8 +5,8 @@ import (
 
 	"github.com/google/uuid"
 
+	"github.com/quinn9x/go-vertical-slice/internal/products"
 	"github.com/quinn9x/go-vertical-slice/internal/products/domain"
-	"github.com/quinn9x/go-vertical-slice/internal/products/infra"
 	"github.com/quinn9x/go-vertical-slice/internal/shared/validation"
 )
 
@@ -20,11 +20,11 @@ type ProductResponse struct {
 // Handler handles creator product requests.
 type Handler struct {
 	validator  *validation.Validator
-	repository *infra.ProductRepository
+	repository products.Repository
 }
 
 // NewHandler creates a new product creator handler.
-func NewHandler(validator *validation.Validator, repository *infra.ProductRepository) *Handler {
+func NewHandler(validator *validation.Validator, repository products.Repository) *Handler {
 	return &Handler{
 		validator:  validator,
 		repository: repository,

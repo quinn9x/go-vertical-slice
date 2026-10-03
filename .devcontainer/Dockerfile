@@ -18,3 +18,10 @@ RUN curl -fsSL \
     "https://github.com/air-verse/air/releases/download/${AIR_VERSION}/air_${AIR_VERSION#v}_${TARGETOS}_${TARGETARCH}" \
     -o /usr/local/bin/air \
     && chmod +x /usr/local/bin/air
+
+# -------------------------------------------------------------
+# Uber Mock Setup for non-root vscode user
+# -------------------------------------------------------------
+USER vscode
+
+RUN go install go.uber.org/mock/mockgen@latest

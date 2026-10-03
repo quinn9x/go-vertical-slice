@@ -1,0 +1,13 @@
+version: "3"
+
+tasks:
+  # task mockgen SOURCE=user.go DESTINATION=mocks/user.go PACKAGE=mocks
+  mockgen:
+    desc: Generate mocks
+    vars:
+      SOURCE: '{{.SOURCE | default "repository.go"}}'
+      DESTINATION: '{{.DESTINATION | default "mocks/repository.go"}}'
+      PACKAGE: '{{.PACKAGE | default "mocks"}}'
+    cmds:
+      - mkdir -p $(dirname "{{.DESTINATION}}")
+      - mockgen -source="{{.SOURCE}}" -destination="{{.DESTINATION}}" -package="{{.PACKAGE}}"

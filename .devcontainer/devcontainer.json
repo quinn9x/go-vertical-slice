@@ -3,10 +3,16 @@
 	"build": {
 		"dockerfile": "Dockerfile"
 	},
+	"containerEnv": {
+		"TESTCONTAINERS_HOST_OVERRIDE": "host.docker.internal"
+	},
 	"features": {
 		"ghcr.io/devcontainers/features/node:2": {
 			"version": "24.21.0",
 			"pnpmVersion": "12.8.1"
+		},
+		"ghcr.io/devcontainers/features/docker-outside-of-docker:1": {
+			"moby": false
 		}
 	},
 	"postCreateCommand": "go mod tidy && pnpm install",
