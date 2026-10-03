@@ -101,3 +101,19 @@ content-type: application/json
   "name": "iPhone 17",
   "price": null
 }
+
+
+### ============================================================
+### GET PRODUCT
+### ============================================================
+
+### Get Product - Success
+GET {{apiURL}}/api/products/{{createProduct.response.body.id}} HTTP/1.1
+
+
+### Get Product - Not Found
+GET {{apiURL}}/api/products/no-exists HTTP/1.1
+
+
+### Get Product - Invalid ID
+GET {{apiURL}}/api/products/invalid-id HTTP/1.1

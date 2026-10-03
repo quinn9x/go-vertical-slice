@@ -11,3 +11,11 @@ type Error struct {
 func (e *Error) Error() string {
 	return e.Message
 }
+
+// NewNotFound creates a new Error instance representing a "not found" error with the provided message.
+func NewNotFound(message string) *Error {
+	return &Error{
+		Code:    CodeNotFound,
+		Message: message,
+	}
+}

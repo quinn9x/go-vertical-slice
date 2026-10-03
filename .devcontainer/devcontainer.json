@@ -19,7 +19,8 @@
 				"eamodio.gitlens",
 				"streetsidesoftware.code-spell-checker",
 				"redhat.vscode-yaml",
-				"humao.rest-client"
+				"humao.rest-client",
+				"mutantdino.resourcemonitor"
 			]
 		}
 	},

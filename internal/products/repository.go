@@ -10,4 +10,5 @@ import (
 // Repository defines the interface for the product repository.
 type Repository interface {
 	Create(ctx context.Context, product *domain.Product) error
+	GetByID(ctx context.Context, id string) (*domain.Product, error)
 }
