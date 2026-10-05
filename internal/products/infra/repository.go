@@ -4,6 +4,7 @@ package infra
 import (
 	"context"
 	"errors"
+	"fmt"
 
 	"gorm.io/gorm"
 
@@ -28,7 +29,13 @@ func NewProductRepository(db *gorm.DB) *ProductRepository {
 
 // Create inserts a new product into the database.
 func (r *ProductRepository) Create(ctx context.Context, product *domain.Product) error {
-	return r.db.WithContext(ctx).Create(product).Error
+	if err := r.db.WithContext(ctx).
+		Create(product).
+		Error; err != nil {
+		return fmt.Errorf("create product: %w", err)
+	}
+
+	return nil
 }
 
 // GetByID retrieves a product from the database by its ID.
@@ -50,9 +57,10 @@ func (r *ProductRepository) GetByID(ctx context.Context, id string) (*domain.Pro
 
 // List retrieves a paginated list of products from the database based on the provided pagination parameters.
 func (r *ProductRepository) List(ctx context.Context, options products.ListOptions) ([]domain.Product, int64, error) {
-	var items []domain.Product
-
-	var total int64
+	var (
+		items []domain.Product
+		total int64
+	)
 
 	query := r.db.
 		WithContext(ctx).
@@ -62,13 +70,13 @@ func (r *ProductRepository) List(ctx context.Context, options products.ListOptio
 		search := "%" + options.Search + "%"
 
 		query = query.Where(
-			"name LIKE ?",
+			"name ILIKE ?",
 			search,
 		)
 	}
 
 	if err := query.Count(&total).Error; err != nil {
-		return nil, 0, err
+		return nil, 0, fmt.Errorf("count products: %w", err)
 	}
 
 	if err := query.

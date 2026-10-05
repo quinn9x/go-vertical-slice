@@ -2,70 +2,39 @@
 package main
 
 import (
+	"fmt"
 	"log"
-	"net/http"
 
-	"github.com/labstack/echo/v5"
-
-	"github.com/quinn9x/go-vertical-slice/internal/products/domain"
-	prodCreate "github.com/quinn9x/go-vertical-slice/internal/products/features/create"
-	prodDelete "github.com/quinn9x/go-vertical-slice/internal/products/features/delete"
-	prodGet "github.com/quinn9x/go-vertical-slice/internal/products/features/get"
-	prodList "github.com/quinn9x/go-vertical-slice/internal/products/features/list"
-	prodUpdate "github.com/quinn9x/go-vertical-slice/internal/products/features/update"
-	"github.com/quinn9x/go-vertical-slice/internal/products/infra"
-	"github.com/quinn9x/go-vertical-slice/internal/shared/database"
-	apperrors "github.com/quinn9x/go-vertical-slice/internal/shared/errors"
-	"github.com/quinn9x/go-vertical-slice/internal/shared/validation"
+	"github.com/quinn9x/go-vertical-slice/internal/app"
+	"github.com/quinn9x/go-vertical-slice/internal/shared/config"
 )
 
 func main() {
-	e := echo.New()
+	if err := run(); err != nil {
+		log.Fatal(err)
+	}
+}
 
-	e.HTTPErrorHandler = apperrors.HTTPErrorHandler
-
-	db, err := database.New("data/app.db")
+func run() error {
+	cfg, err := config.Load()
 	if err != nil {
-		log.Fatal(err)
+		return fmt.Errorf("load config: %w", err)
 	}
 
-	// Migrate the schema
-	if err := db.AutoMigrate(&domain.Product{}); err != nil {
-		log.Fatal(err)
+	application, err := app.New(&cfg)
+	if err != nil {
+		return fmt.Errorf("create application: %w", err)
 	}
 
-	prodRepo := infra.NewProductRepository(db.DB)
+	defer func() {
+		if err := application.Close(); err != nil {
+			log.Printf("failed to close application: %v", err)
+		}
+	}()
 
-	validator := validation.New()
-
-	prodCreateHandler := prodCreate.NewHandler(validator, prodRepo)
-	prodCreateEndpoint := prodCreate.NewEndpoint(prodCreateHandler)
-
-	prodGetHandler := prodGet.NewHandler(prodRepo)
-	prodGetEndpoint := prodGet.NewEndpoint(prodGetHandler)
-
-	prodListHandler := prodList.NewHandler(prodRepo)
-	prodListEndpoint := prodList.NewEndpoint(prodListHandler)
-
-	prodUpdateHandler := prodUpdate.NewHandler(validator, prodRepo)
-	prodUpdateEndpoint := prodUpdate.NewEndpoint(prodUpdateHandler)
-
-	prodDeleteHandler := prodDelete.NewHandler(prodRepo)
-	prodDeleteEndpoint := prodDelete.NewEndpoint(prodDeleteHandler)
-
-	e.POST("/api/products", prodCreateEndpoint.Handle)
-	e.GET("/api/products/:id", prodGetEndpoint.Handle)
-	e.GET("/api/products", prodListEndpoint.Handle)
-	e.PUT("/api/products/:id", prodUpdateEndpoint.Handle)
-	e.DELETE("/api/products/:id", prodDeleteEndpoint.Handle)
-
-	e.GET("/health", func(c *echo.Context) error {
-		return c.JSON(http.StatusOK, map[string]string{
-			"status": "ok",
-		})
-	})
-
-	if err := e.Start(":9080"); err != nil {
-		log.Fatal(err)
+	if err := application.Start(); err != nil {
+		return fmt.Errorf("start application: %w", err)
 	}
+
+	return nil
 }
