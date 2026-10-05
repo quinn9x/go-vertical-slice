@@ -2,7 +2,10 @@
 package app
 
 import (
+	"context"
 	"fmt"
+	"log/slog"
+	"time"
 
 	"github.com/labstack/echo/v5"
 
@@ -13,15 +16,18 @@ import (
 	"github.com/quinn9x/go-vertical-slice/internal/shared/validation"
 )
 
+const gracefulShutdownTimeout = 10 * time.Second
+
 // Application represents the application and its dependencies.
 type Application struct {
 	Config *config.Config
 	DB     *database.DB
 	Echo   *echo.Echo
+	Logger *slog.Logger
 }
 
 // New creates and initializes a new application.
-func New(cfg *config.Config) (*Application, error) {
+func New(cfg *config.Config, log *slog.Logger) (*Application, error) {
 	db, err := database.New(&cfg.Database)
 	if err != nil {
 		return nil, err
@@ -54,14 +60,26 @@ func New(cfg *config.Config) (*Application, error) {
 		Config: cfg,
 		DB:     db,
 		Echo:   e,
+		Logger: log,
 	}, nil
 }
 
 // Start starts the application server.
-func (a *Application) Start() error {
+func (a *Application) Start(ctx context.Context) error {
 	address := fmt.Sprintf("%s:%d", a.Config.App.Host, a.Config.App.Port)
 
-	return a.Echo.Start(address)
+	a.Logger.Info(
+		"starting HTTP server",
+		"host", a.Config.App.Host,
+		"port", a.Config.App.Port,
+	)
+
+	server := echo.StartConfig{
+		Address:         address,
+		GracefulTimeout: gracefulShutdownTimeout,
+	}
+
+	return server.Start(ctx, a.Echo)
 }
 
 // Close closes the application and its database connection.
