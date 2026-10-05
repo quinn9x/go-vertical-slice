@@ -4,6 +4,7 @@ package validation
 import (
 	"errors"
 	"fmt"
+	"reflect"
 	"strings"
 
 	"github.com/go-playground/validator/v10"
@@ -38,7 +39,7 @@ func (v *Validator) Struct(value any) error {
 	fields := make(map[string]string)
 
 	for _, fieldErr := range validationErrors {
-		field := strings.ToLower(fieldErr.Field())
+		field := fieldName(value, fieldErr.Field())
 
 		fields[field] = messageFor(fieldErr)
 	}
@@ -63,4 +64,28 @@ func messageFor(err validator.FieldError) string {
 	default:
 		return "is invalid"
 	}
+}
+
+func fieldName(value any, field string) string {
+	valueType := reflect.TypeOf(value)
+
+	if valueType.Kind() == reflect.Ptr {
+		valueType = valueType.Elem()
+	}
+
+	fieldStruct, ok := valueType.FieldByName(field)
+	if !ok {
+		return strings.ToLower(field)
+	}
+
+	jsonTag := fieldStruct.Tag.Get("json")
+	if jsonTag != "" {
+		name := strings.Split(jsonTag, ",")[0]
+
+		if name != "" && name != "-" {
+			return name
+		}
+	}
+
+	return strings.ToLower(field)
 }
